@@ -1,0 +1,27 @@
+{
+  "name": "wind-for-kite",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && node static/polling.js",
+    "build": "webpack --config webpack.config.js"
+  },
+  "author": "Annie",
+  "license": "MIT",
+  "dependencies": {
+    "bson-ext": "^2.0.0",
+    "kerberos": "0.0.23",
+    "mongodb": "^3.0.5",
+    "node-telegram-bot-api": "^0.30.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  }
+}
