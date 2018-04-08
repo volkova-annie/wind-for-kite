@@ -12,16 +12,16 @@ const token = secretToken;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
-// Matches "/echo [whatever]"
+// Matches '/echo [whatever]'
 bot.onText(/\/echo (.+)/, (msg, match) => {
   // 'msg' is the received Message from Telegram
   // 'match' is the result of executing the regexp above on the text content
   // of the message
 
   const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
+  const resp = match[1]; // the captured 'whatever'
 
-  // send back the matched "whatever" to the chat
+  // send back the matched 'whatever' to the chat
   bot.sendMessage(chatId, resp);
 });
 
@@ -52,51 +52,50 @@ bot.onText(/\/location (.+)/, (msg, match) => {
 
 bot.onText(/\/info/, (msg) => {
   const chatId = msg.chat.id;
-  const location =
-  bot.sendMessage(chatId, `Hello, ${name}!`);
-  console.log('start', msg);
-})
+  const userId = msg.from.id;
+
+  const result = readLocation(userId);
+  result.then(response => {
+    console.log(response);
+    bot.sendMessage(chatId, `Your location is ${response}!`);
+  })
+  .catch((error) => {
+    console.log(error)
+  });
+});
 
 const readLocation = async (userId) => {
-  let result = '';
-
   const client = await MongoClient.connect(url);
-  const db = client.db("wind-for-kite");
+  const db = client.db('wind-for-kite');
   const collection = db.collection('users');
-  const userData = await collection.find({_id: userId});
+  const userData = await collection.find({_id: userId}).toArray();
 
-  if (userData) {
-    result = userData.location;
-  }
-
-  return result;
-}
+  return userData ? userData[0].location : '';
+};
 
 const saveLocation = (userId, location) => {
   MongoClient.connect(url, function(err, client) {
     assert.equal(null, err);
-    console.log("Connected successfully to server");
+    console.log('Connected successfully to server');
 
-    const db = client.db("wind-for-kite");
+    const db = client.db('wind-for-kite');
 
     const collection = db.collection('users');
     collection.updateOne({ _id : userId }
       , { $set: { location : location } }, { upsert: true }, function(err, result) {
         assert.equal(err, null);
-        console.log("User location added to DB");
-        //callback(result);
+        console.log('User location added to DB');
       });
   });
-}
-
+};
 
 
 // Use connect method to connect to the server
 /*MongoClient.connect(url, function(err, client) {
   assert.equal(null, err);
-  console.log("Connected successfully to server");
+  console.log('Connected successfully to server');
 
-  const db = client.db("wind-for-kite");
+  const db = client.db('wind-for-kite');
 
   findDocuments(db, () => {
 
@@ -128,7 +127,7 @@ const insertDocuments = function(db, callback) {
     assert.equal(err, null);
     assert.equal(3, result.result.n);
     assert.equal(3, result.ops.length);
-    console.log("Inserted 3 documents into the collection");
+    console.log('Inserted 3 documents into the collection');
     callback(result);
   });
 }
@@ -139,7 +138,7 @@ const findDocuments = function(db, callback) {
   // Find some documents
   collection.find({}).toArray(function(err, docs) {
     assert.equal(err, null);
-    console.log("Found the following records");
+    console.log('Found the following records');
     console.log(docs)
     callback(docs);
   });
@@ -151,7 +150,7 @@ const findDocumentsQueryFilter = function(db, callback) {
   // Find some documents
   collection.find({'a': 3}).toArray(function(err, docs) {
     assert.equal(err, null);
-    console.log("Found the following records");
+    console.log('Found the following records');
     console.log(docs);
     callback(docs);
   });
@@ -165,7 +164,7 @@ const updateDocument = function(db, callback) {
     , { $set: { b : 1 } }, function(err, result) {
       assert.equal(err, null);
       assert.equal(1, result.result.n);
-      console.log("Updated the document with the field a equal to 2");
+      console.log('Updated the document with the field a equal to 2');
       callback(result);
     });
 }
@@ -177,14 +176,14 @@ const removeDocument = function(db, callback) {
   collection.deleteOne({ a : 3 }, function(err, result) {
     assert.equal(err, null);
     assert.equal(1, result.result.n);
-    console.log("Removed the document with the field a equal to 3");
+    console.log('Removed the document with the field a equal to 3');
     callback(result);
   });
 }
 
 const indexCollection = function(db, callback) {
   db.collection('documents').createIndex(
-    { "a": 1 },
+    { 'a': 1 },
     null,
     function(err, results) {
       console.log(results);
